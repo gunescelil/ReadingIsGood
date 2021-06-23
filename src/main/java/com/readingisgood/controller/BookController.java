@@ -2,19 +2,22 @@ package com.readingisgood.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.readingisgood.constant.ApplicationConstants;
+import com.readingisgood.dto.BookStockUpdateDto;
+import com.readingisgood.dto.NewBookDto;
 import com.readingisgood.service.BookService;
 
 @RestController
@@ -31,21 +34,21 @@ public class BookController
         this.bookService = bookService;
     }
 
-    @PostMapping(value = "/", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @PostMapping(value = "", consumes = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public void saveBook(@RequestBody String name)
+    public void saveNewBook(@RequestBody @Valid NewBookDto bookSaveDto)
     {
         LOG.debug(ApplicationConstants.STEPIN);
-        bookService.saveBook(name);
+        bookService.saveNewBook(bookSaveDto);
         LOG.debug(ApplicationConstants.STEPOUT);
     }
     
-    @PatchMapping(value = "/", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @PutMapping(value = "", consumes = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public void updateBook(@RequestBody String name)
+    public void updateBookStock(@RequestBody @Valid BookStockUpdateDto bookStockUpdateDto)
     {
         LOG.debug(ApplicationConstants.STEPIN);
-        bookService.updateBook(name);
+        bookService.updateStockofBook(bookStockUpdateDto);
         LOG.debug(ApplicationConstants.STEPOUT);
     }
 }

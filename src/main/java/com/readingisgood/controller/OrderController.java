@@ -2,6 +2,8 @@ package com.readingisgood.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.readingisgood.constant.ApplicationConstants;
+import com.readingisgood.entity.Order;
 import com.readingisgood.service.OrderService;
 
 @RestController
@@ -30,9 +33,9 @@ public class OrderController
         this.orderService = orderService;
     }
     
-    @PostMapping(value = "/", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @PostMapping(value = "", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public void saveNewOrder()
+    public void saveNewOrder(@Valid Order order)
     {
         LOG.debug(ApplicationConstants.STEPIN);
         orderService.saveNewOrder();
