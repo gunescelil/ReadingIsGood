@@ -1,5 +1,7 @@
 package com.readingisgood.entity;
 
+import javax.validation.constraints.PositiveOrZero;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 
@@ -13,6 +15,7 @@ public class Book
 
     private String bookName;
 
+    @PositiveOrZero
     private int stockCount;
 
     public Book()

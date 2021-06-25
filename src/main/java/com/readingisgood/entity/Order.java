@@ -1,10 +1,13 @@
 package com.readingisgood.entity;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+
+import com.readingisgood.constant.OrderStatus;
 
 public class Order
 {
@@ -12,19 +15,20 @@ public class Order
     @Indexed(unique = true)
     private String id;
 
-    private String orderDate;
+    private long orderDate;
 
+    @NotBlank
     private String bookId;
 
     @NotNull
     @PositiveOrZero(message = "Count can not be less than zero")
     private int count;
 
-    private String status;
+    private OrderStatus status;
 
     private String email;
 
-    public Order(String id, String orderDate, String bookId, int count, String status, String email)
+    public Order(String id, long orderDate, String bookId, int count, OrderStatus status, String email)
     {
         super();
         this.id = id;
@@ -34,7 +38,7 @@ public class Order
         this.status = status;
         this.email = email;
     }
-    
+
     public Order()
     {
         super();
@@ -50,12 +54,12 @@ public class Order
         this.id = id;
     }
 
-    public String getOrderDate()
+    public long getOrderDate()
     {
         return orderDate;
     }
 
-    public void setOrderDate(String orderDate)
+    public void setOrderDate(long orderDate)
     {
         this.orderDate = orderDate;
     }
@@ -80,12 +84,12 @@ public class Order
         this.count = count;
     }
 
-    public String getStatus()
+    public OrderStatus getStatus()
     {
         return status;
     }
 
-    public void setStatus(String status)
+    public void setStatus(OrderStatus status)
     {
         this.status = status;
     }
