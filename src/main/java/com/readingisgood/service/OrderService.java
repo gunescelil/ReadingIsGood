@@ -8,6 +8,8 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +28,7 @@ import com.readingisgood.repository.OrderRepository;
 @Service
 public class OrderService
 {
+    private static final Logger LOG = LoggerFactory.getLogger(OrderService.class);
 
     private OrderRepository orderRepository;
 
@@ -53,7 +56,7 @@ public class OrderService
         order.setOrderDate(Instant.now().toEpochMilli());
         order.setStatus(OrderStatus.ORDERED);
         order.setBookPriceAtDate(priceOfBook);
-
+        LOG.info("Order from user will be saved username: {}", order.getEmail());
         return orderRepository.save(order);
     }
 

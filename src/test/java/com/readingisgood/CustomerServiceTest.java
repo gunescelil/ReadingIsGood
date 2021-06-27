@@ -18,6 +18,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.readingisgood.dto.CustomerDto;
 import com.readingisgood.dto.CustomerSaveDto;
@@ -35,6 +36,9 @@ class CustomerServiceTest
 
     @Mock
     private CustomerRepository customerRepository;
+
+    @Mock
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @InjectMocks
     private CustomerService customerService;
@@ -66,8 +70,6 @@ class CustomerServiceTest
         assertEquals(firstName, actual.getFirstName());
         assertEquals(lastName, actual.getLastName());
         assertEquals(email, actual.getEmail());
-        assertEquals(password, actual.getPassword());
-
     }
 
     @Test

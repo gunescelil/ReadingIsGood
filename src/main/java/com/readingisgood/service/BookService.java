@@ -2,6 +2,8 @@ package com.readingisgood.service;
 
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +21,8 @@ import com.readingisgood.repository.BookRepository;
 @Service
 public class BookService
 {
+
+    private static final Logger LOG = LoggerFactory.getLogger(BookService.class);
 
     private BookRepository bookRepository;
 
@@ -39,6 +43,7 @@ public class BookService
         try
         {
             lock.lock();
+            LOG.info("NewBookDto will be written to DB: {}", bookSaveDto);
             return this.bookRepository.save(new Book(bookSaveDto));
         }
         finally
@@ -60,6 +65,7 @@ public class BookService
             if (book != null)
             {
                 book.setStockCount(bookStockUpdateDto.getStock());
+                LOG.info("Book will be updated as: {}", book);
                 return this.bookRepository.save(book);
             }
             else
@@ -89,6 +95,7 @@ public class BookService
                 if (book.getStockCount() >= count)
                 {
                     book.setStockCount(book.getStockCount() - count);
+                    LOG.info("Book will be updated as: {}", book);
                     this.bookRepository.save(book);
                 }
                 else
