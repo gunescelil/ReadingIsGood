@@ -1,5 +1,7 @@
 package com.readingisgood.entity;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
 import org.springframework.data.annotation.Id;
@@ -13,10 +15,14 @@ public class Book
     @Indexed(unique = true)
     private String bookId;
 
+    @NotBlank
     private String bookName;
 
     @PositiveOrZero
     private int stockCount;
+
+    @Positive
+    private double price;
 
     public Book()
     {
@@ -25,16 +31,17 @@ public class Book
     public Book(NewBookDto bookSaveDto)
     {
         super();
-        this.bookId = bookSaveDto.getBookId();
         this.bookName = bookSaveDto.getBookName();
+        this.price = bookSaveDto.getPrice();
     }
 
-    public Book(String bookId, String bookName, int stockCount)
+    public Book(String bookId, String bookName, int stockCount, double price)
     {
         super();
         this.bookId = bookId;
         this.bookName = bookName;
         this.stockCount = stockCount;
+        this.price = price;
     }
 
     public String getBookId()
@@ -65,6 +72,16 @@ public class Book
     public void setStockCount(int stockCount)
     {
         this.stockCount = stockCount;
+    }
+
+    public double getPrice()
+    {
+        return price;
+    }
+
+    public void setPrice(double price)
+    {
+        this.price = price;
     }
 
     @Override

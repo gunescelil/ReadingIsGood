@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.readingisgood.constant.ApplicationConstants;
+import com.readingisgood.dto.StatisticsDto;
 import com.readingisgood.service.StatisticsService;
 
 @RestController
@@ -28,12 +29,13 @@ public class StatisticsController
         this.statisticsService = statisticsService;
     }
     
-    @GetMapping(value = "/", produces = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "", produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public void getStatistics()
+    public StatisticsDto getStatistics()
     {
         LOG.debug(ApplicationConstants.STEPIN);
-        statisticsService.getStatistics();
+        StatisticsDto statisticsDto = statisticsService.getStatistics();
         LOG.debug(ApplicationConstants.STEPOUT);
+        return statisticsDto;
     }
 }

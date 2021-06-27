@@ -3,7 +3,6 @@ package com.readingisgood.service;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.readingisgood.constant.OrderStatus;
+import com.readingisgood.dto.OrderDto;
 import com.readingisgood.entity.Order;
 import com.readingisgood.exception.BadRequestException;
 import com.readingisgood.exception.ExceptionModel;
@@ -39,20 +39,29 @@ public class OrderService
     }
 
     @Transactional
-    public void saveNewOrder(@Valid Order order)
+    public Order saveNewOrder(@Valid OrderDto orderDto)
     {
-        // TODO: lock mechanism
-        bookService.setBookForOrder(order.getBookId(), order.getCount());
+        bookService.setBookForOrder(orderDto.getBookId(), orderDto.getCount());
+        double priceOfBook = bookService.getPriceOfBook(orderDto.getBookId());
+
+        Order order = new Order();
+
+        order.setBookId(orderDto.getBookId());
+        order.setCount(orderDto.getCount());
+        order.setEmail(orderDto.getEmail());
+
         order.setOrderDate(Instant.now().toEpochMilli());
         order.setStatus(OrderStatus.ORDERED);
-        orderRepository.save(order);
+        order.setBookPriceAtDate(priceOfBook);
+
+        return orderRepository.save(order);
     }
 
     public Order getOrderById(String id)
     {
         Optional<Order> result = orderRepository.findById(id);
         if (result.isPresent())
-        {            
+        {
             return result.get();
         }
         else
@@ -82,8 +91,8 @@ public class OrderService
         }
         catch (DateTimeParseException e)
         {
-            throw new BadRequestException(
-                    new ExceptionModel(HttpStatus.BAD_REQUEST, "The date can not be parsed. It must be of format: yyyy-MM-DD"));
+            throw new BadRequestException(new ExceptionModel(HttpStatus.BAD_REQUEST,
+                    "The date can not be parsed. It must be ISO-8601 Format"));
         }
     }
 

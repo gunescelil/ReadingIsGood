@@ -1,6 +1,5 @@
 package com.readingisgood.exception;
 
-import org.springframework.data.annotation.Transient;
 import org.springframework.http.HttpStatus;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -10,6 +9,11 @@ import com.readingisgood.dto.JsonObjectBase;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ExceptionModel extends JsonObjectBase
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4767985021529062954L;
+
     @JsonProperty("errorCode")
     private HttpStatus errorCode;
 

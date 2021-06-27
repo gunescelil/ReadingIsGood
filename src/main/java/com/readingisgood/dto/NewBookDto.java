@@ -1,42 +1,34 @@
 package com.readingisgood.dto;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class NewBookDto
+public class NewBookDto extends JsonObjectBase
 {
-
-    @NotBlank(message = "Book Id can not be blank")
-    @JsonProperty("bookId")
-    private String bookId;
-
     @NotBlank(message = "Book Name can not be blank")
     @JsonProperty("bookName")
     private String bookName;
+    
+    @NotNull
+    @Positive(message = "Book price must be above zero")
+    @JsonProperty("price")
+    private double price;
 
+    public NewBookDto(String bookName, double price)
+    {
+        super();
+        this.bookName = bookName;
+        this.price = price;
+    }
+    
     public NewBookDto()
     {
         super();
-    }
-
-    public NewBookDto(String bookId, String bookName)
-    {
-        super();
-        this.bookId = bookId;
-        this.bookName = bookName;
-    }
-
-    public String getBookId()
-    {
-        return bookId;
-    }
-
-    public void setBookId(String bookId)
-    {
-        this.bookId = bookId;
     }
 
     public String getBookName()
@@ -47,5 +39,15 @@ public class NewBookDto
     public void setBookName(String bookName)
     {
         this.bookName = bookName;
+    }
+    
+    public double getPrice()
+    {
+        return price;
+    }
+
+    public void setPrice(double price)
+    {
+        this.price = price;
     }
 }

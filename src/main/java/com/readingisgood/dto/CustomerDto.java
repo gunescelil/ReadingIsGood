@@ -1,14 +1,16 @@
 package com.readingisgood.dto;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.readingisgood.entity.Customer;
 
-public class CustomerDto
+public class CustomerDto extends JsonObjectBase
 {
     @NotBlank(message = "Email is mandatory")
     @JsonProperty("email")
+    @Email(message = "Email should be valid")
     private String email;
 
     @NotBlank
@@ -27,17 +29,17 @@ public class CustomerDto
         this.lastName = lastName;
     }
 
+    public CustomerDto()
+    {
+        super();
+    }
+
     public CustomerDto(Customer customer)
     {
         super();
         this.email = customer.getEmail();
         this.firstName = customer.getFirstName();
         this.lastName = customer.getLastName();
-    }
-
-    public CustomerDto()
-    {
-        super();
     }
 
     public String getEmail()

@@ -1,6 +1,10 @@
 package com.readingisgood.service;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,9 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.readingisgood.dto.BookStockUpdateDto;
 import com.readingisgood.dto.NewBookDto;
 import com.readingisgood.entity.Book;
-import com.readingisgood.exception.BadRequestException;
 import com.readingisgood.exception.ExceptionModel;
-import com.readingisgood.exception.NotAllowedOperationException;
 import com.readingisgood.exception.NotFoundException;
 import com.readingisgood.repository.BookRepository;
 
@@ -20,6 +22,11 @@ public class BookService
 
     private BookRepository bookRepository;
 
+    private final ReentrantLock lock = new ReentrantLock();
+
+    private static final String BOOK_NOT_FOUND = "The book with Id: %s is not found";
+    private static final String BOOK_STOCK_IS_NOT_ENOUGH_AS_REQUEST = "The stock of book with Id: %s is not enough as requested: %d. ";
+
     @Autowired
     public BookService(BookRepository bookRepository)
     {
@@ -27,50 +34,113 @@ public class BookService
     }
 
     @Transactional
-    public void saveNewBook(NewBookDto bookSaveDto)
+    public Book saveNewBook(NewBookDto bookSaveDto)
     {
-        this.bookRepository.save(new Book(bookSaveDto));
+        try
+        {
+            lock.lock();
+            return this.bookRepository.save(new Book(bookSaveDto));
+        }
+        finally
+        {
+            if (lock.isHeldByCurrentThread())
+            {
+                lock.unlock();
+            }
+        }
     }
 
     @Transactional
-    public void updateStockofBook(BookStockUpdateDto bookStockUpdateDto)
+    public Book updateStockofBook(BookStockUpdateDto bookStockUpdateDto)
     {
-        Book book = this.bookRepository.findByBookId(bookStockUpdateDto.getBookId());
-        if (book != null)
+        try
         {
-            book.setStockCount(bookStockUpdateDto.getStock());
-            this.bookRepository.save(book);
+            lock.lock();
+            Book book = this.bookRepository.findByBookId(bookStockUpdateDto.getBookId());
+            if (book != null)
+            {
+                book.setStockCount(bookStockUpdateDto.getStock());
+                return this.bookRepository.save(book);
+            }
+            else
+            {
+                throw new NotFoundException(new ExceptionModel(HttpStatus.NOT_FOUND,
+                        String.format(BOOK_NOT_FOUND, bookStockUpdateDto.getBookId())));
+            }
         }
-        else
+        finally
         {
-            throw new NotFoundException(new ExceptionModel(HttpStatus.NOT_FOUND,
-                    "The book with Id: " + bookStockUpdateDto.getBookId() + " is not found"));
+            if (lock.isHeldByCurrentThread())
+            {
+                lock.unlock();
+            }
         }
     }
 
     @Transactional
     public void setBookForOrder(String bookId, int count)
     {
-        Book book = this.bookRepository.findByBookId(bookId);
-        if (book != null)
+        try
         {
-            if (book.getStockCount() >= count)
+            lock.lock();
+            Book book = this.bookRepository.findByBookId(bookId);
+            if (book != null)
             {
-                book.setStockCount(book.getStockCount() - count);
-                this.bookRepository.save(book);
+                if (book.getStockCount() >= count)
+                {
+                    book.setStockCount(book.getStockCount() - count);
+                    this.bookRepository.save(book);
+                }
+                else
+                {
+                    throw new NotFoundException(new ExceptionModel(HttpStatus.NOT_FOUND,
+                            String.format(BOOK_STOCK_IS_NOT_ENOUGH_AS_REQUEST, bookId, count)
+                                    + String.format("Only left %d", book.getStockCount())));
+                }
             }
             else
             {
-                throw new BadRequestException(new ExceptionModel(HttpStatus.BAD_REQUEST,
-                        "The stock is book with Id: " + bookId + " is not enough as requested: " + count));
+                throw new NotFoundException(
+                        new ExceptionModel(HttpStatus.NOT_FOUND, String.format(BOOK_NOT_FOUND, bookId)));
             }
         }
-        else
+        finally
         {
-            throw new NotFoundException(
-                    new ExceptionModel(HttpStatus.NOT_FOUND, "The book with Id: " + bookId + " is not found"));
+            if (lock.isHeldByCurrentThread())
+            {
+                lock.unlock();
+            }
         }
+    }
 
+    public double getPriceOfBook(String bookId)
+    {
+        try
+        {
+            lock.lock();
+            Book book = this.bookRepository.findByBookId(bookId);
+            if (book != null)
+            {
+                return book.getPrice();
+            }
+            else
+            {
+                throw new NotFoundException(
+                        new ExceptionModel(HttpStatus.NOT_FOUND, String.format(BOOK_NOT_FOUND, bookId)));
+            }
+        }
+        finally
+        {
+            if (lock.isHeldByCurrentThread())
+            {
+                lock.unlock();
+            }
+        }
+    }
+
+    public Page<Book> getAllBooks(Pageable pageable)
+    {
+        return this.bookRepository.findAll(pageable);
     }
 
 }

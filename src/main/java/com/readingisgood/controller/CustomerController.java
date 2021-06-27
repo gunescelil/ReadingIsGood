@@ -52,10 +52,10 @@ public class CustomerController
 
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public CustomerDto getCustomer(@RequestParam String userName)
+    public CustomerDto getCustomer(@RequestParam String email)
     {
         LOG.debug(ApplicationConstants.STEPIN);
-        CustomerDto result = customerService.getCustomer(userName);
+        CustomerDto result = customerService.getCustomer(email);
         LOG.debug(ApplicationConstants.STEPOUT);
         return result;
     }

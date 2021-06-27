@@ -2,6 +2,7 @@ package com.readingisgood;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.readingisgood.exception.JsonSerializationException;
 
 public class Misc
 {
@@ -15,10 +16,12 @@ public class Misc
         }
         catch (JsonProcessingException e)
         {
-            throw new RuntimeException("Failed to serialize json object!", e);
+            throw new JsonSerializationException("Failed to serialize json object!", e);
         }
 
     }
-    
-    private Misc() {}
+
+    private Misc()
+    {
+    }
 }

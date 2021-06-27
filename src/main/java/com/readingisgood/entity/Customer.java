@@ -25,10 +25,10 @@ public class Customer
     {
     }
 
-    public Customer(String userName, String password, String firstName, String lastName)
+    public Customer(String email, String password, String firstName, String lastName)
     {
         super();
-        this.email = userName;
+        this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;

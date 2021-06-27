@@ -1,7 +1,7 @@
 package com.readingisgood.entity;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
 import org.springframework.data.annotation.Id;
@@ -20,15 +20,19 @@ public class Order
     @NotBlank
     private String bookId;
 
-    @NotNull
     @PositiveOrZero(message = "Count can not be less than zero")
     private int count;
 
     private OrderStatus status;
 
+    @NotBlank
     private String email;
 
-    public Order(String id, long orderDate, String bookId, int count, OrderStatus status, String email)
+    @Positive
+    private double bookPriceAtDate;
+
+    public Order(String id, long orderDate, String bookId, int count, OrderStatus status, String email,
+            double bookPriceAtDate)
     {
         super();
         this.id = id;
@@ -37,6 +41,7 @@ public class Order
         this.count = count;
         this.status = status;
         this.email = email;
+        this.bookPriceAtDate = bookPriceAtDate;
     }
 
     public Order()
@@ -102,6 +107,16 @@ public class Order
     public void setEmail(String email)
     {
         this.email = email;
+    }
+
+    public double getBookPriceAtDate()
+    {
+        return bookPriceAtDate;
+    }
+
+    public void setBookPriceAtDate(double bookPriceAtDate)
+    {
+        this.bookPriceAtDate = bookPriceAtDate;
     }
 
 }

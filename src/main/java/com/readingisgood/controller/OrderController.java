@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.readingisgood.constant.ApplicationConstants;
+import com.readingisgood.dto.OrderDto;
 import com.readingisgood.entity.Order;
 import com.readingisgood.service.OrderService;
 
@@ -39,11 +40,12 @@ public class OrderController
 
     @PostMapping(value = "", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public void saveNewOrder(@RequestBody @Valid Order order)
+    public Order saveNewOrder(@RequestBody @Valid OrderDto orderDto)
     {
         LOG.debug(ApplicationConstants.STEPIN);
-        orderService.saveNewOrder(order);
+        Order newOrder = orderService.saveNewOrder(orderDto);
         LOG.debug(ApplicationConstants.STEPOUT);
+        return newOrder;
     }
 
     @GetMapping(value = "/{orderId}", produces = APPLICATION_JSON_VALUE)
