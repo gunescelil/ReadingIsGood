@@ -86,7 +86,7 @@ public class Customer
     @Override
     public String toString()
     {
-        return String.format("CustomerEntity[firstName='%s', lastName='%s']", firstName, lastName);
+        return String.format("Customer[firstName='%s', lastName='%s']", firstName, lastName);
     }
 
 }

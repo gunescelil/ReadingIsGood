@@ -87,6 +87,6 @@ public class Book
     @Override
     public String toString()
     {
-        return String.format("CustomerEntity[bookId='%s' firstName='%s', lastName='%s']", bookId, bookName, stockCount);
+        return String.format("Book[bookId='%s' bookName='%s', stockCount='%s']", bookId, bookName, stockCount);
     }
 }
